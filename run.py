@@ -11,12 +11,12 @@ from hendlers import router as main_router
 
 from database.models import async_db_main
 
+load_dotenv()
 async def main():
-    load_dotenv()
     bot = Bot(token=os.getenv("TOKEN"))
     # dp = Dispatcher(storage=RedisStorage.from_url(os.getenv("REDIS_URL")))
     
-    dp = Dispatcher(storage=MemoryStorage())
+    dp = Dispatcher()
     dp.include_router(main_router)
     await async_db_main()
     await bot.delete_webhook(drop_pending_updates=True)
