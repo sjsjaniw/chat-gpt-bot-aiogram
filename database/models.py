@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 from sqlalchemy import ForeignKey, Integer, BigInteger, String, Boolean, DateTime, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
@@ -41,9 +41,8 @@ class AiUserOrm(Base):
     fluxpixel = mapped_column(Integer, nullable=False, default=0)
     sd3 = mapped_column(Integer, nullable=False, default=0)
 
-    date_of_issued_requests = mapped_column(DateTime, nullable=False, server_default=func.now())
+    date_of_issued_requests = mapped_column(DateTime, nullable=True, default=datetime.now(timezone.utc).replace(tzinfo=None))
     date_of_subscription = mapped_column(DateTime, nullable=True) 
-    end_of_subscription = mapped_column(DateTime, nullable=True)
 
 async def async_db_main():
     async with engine.begin() as conn:

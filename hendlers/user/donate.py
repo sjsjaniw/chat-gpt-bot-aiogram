@@ -1,6 +1,7 @@
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery, LabeledPrice, PreCheckoutQuery, PollAnswer
+from aiogram.types import Message, CallbackQuery, LabeledPrice, PreCheckoutQuery, PollAnswer, SuccessfulPayment
 from keyboards.other_kb import donate_button, premium
+from database.requests import User
 
 router = Router()
 
@@ -28,10 +29,21 @@ async def returnqwe(callback_query: CallbackQuery):
     if level == 3: payload = 300
     await callback_query.message.answer_invoice(title="Премиум", 
                                                 description="Премиум", 
-                                                payload=str(payload), 
+                                                payload=str(payload),
                                                 currency="XTR", 
                                                 prices=[LabeledPrice(label="XTR", amount=payload)])
 
 @router.pre_checkout_query()
 async def pre_checkout_query(query: PreCheckoutQuery):
     await query.answer(True)
+
+@router.message(F.successful_payment)
+async def successful_payment(message: Message):
+    payload = int(message.successful_payment.invoice_payload)
+    if payload == 50:
+        await User.ai.level.set(tg_id=message.from_user.id, level=1)
+    if payload == 150:
+        await User.ai.level.set(tg_id=message.from_user.id, level=2)
+    if payload == 300:
+        await User.ai.level.set(tg_id=message.from_user.id, level=3)
+    await User.ai.subscription_date.set(tg_id=message.from_user.id)
