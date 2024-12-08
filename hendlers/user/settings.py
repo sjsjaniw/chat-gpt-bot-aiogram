@@ -13,7 +13,7 @@ async def setting(message: Message):
 
 @router.callback_query(F.data == "select_ai")
 async def select_ai(callback_query: CallbackQuery):
-    await callback_query.message.answer(text="Выберете нейросеть:", reply_markup=await select_ai_kb())
+    await callback_query.message.answer(text="Выберете нейросеть:", reply_markup=await select_ai_kb(tg_id=callback_query.from_user.id))
 
 @router.callback_query(lambda callback_query: callback_query.data.startswith("ai_"))
 async def select_ai_id(callback_query: CallbackQuery, state: FSMContext):

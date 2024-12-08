@@ -13,6 +13,6 @@ async def premium():
 async def donate_button(lvl: int):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Stars", pay=True, callback_data=f"payStars_{lvl}")],
-        [InlineKeyboardButton(text="Криптаволюта", callback_data="1")]
+        [InlineKeyboardButton(text="Криптаволюта", callback_data=f"payCrypto_{lvl}")]
     ])
     return keyboard

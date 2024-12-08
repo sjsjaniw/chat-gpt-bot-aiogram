@@ -18,7 +18,6 @@ class UserOrm(Base):
     __tablename__ = "users"
     id = mapped_column(Integer, primary_key=True)
     tg_id = mapped_column(BigInteger, nullable=False, unique=True)
-    # tg_id = mapped_column(BigInteger, nullable=False, unique=True)
     language = mapped_column(String(2), nullable=False, default="ru")
     ai_id = mapped_column(Integer, nullable=False, default=0)
     is_admin = mapped_column(Boolean, nullable=False, default=False)
@@ -35,10 +34,7 @@ class AiUserOrm(Base):
     gpt4o = mapped_column(Integer, nullable=False, default=0)
     llama31405b = mapped_column(Integer, nullable=False, default=0)
     claude35sonnet = mapped_column(Integer, nullable=False, default=0)
-    flux = mapped_column(Integer, nullable=False, default=0)
-    fluxrealism = mapped_column(Integer, nullable=False, default=0)
-    fluxanime = mapped_column(Integer, nullable=False, default=0)
-    fluxpixel = mapped_column(Integer, nullable=False, default=0)
+    playgroundv25 = mapped_column(Integer, nullable=False, default=0)
     sd3 = mapped_column(Integer, nullable=False, default=0)
 
     date_of_issued_requests = mapped_column(DateTime, nullable=True, default=datetime.now(timezone.utc).replace(tzinfo=None))

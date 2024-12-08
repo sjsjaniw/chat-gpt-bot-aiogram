@@ -46,6 +46,6 @@ async def request_to_ai(message: Message):
         url = f"generated_images{str(enter_ai)[7:]}"
         photo = FSInputFile(path=url)
         await message.reply_photo(photo=photo)
-        await aiofiles.os.remove(path=url)
+        # await aiofiles.os.remove(path=url)
 
     await User.ai.remove_requests(tg_id=tg_id, ai_model_id=ai_id, quantity_of_requests=1)

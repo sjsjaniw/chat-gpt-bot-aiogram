@@ -33,11 +33,8 @@ class User:
                 if ai_model_id == 1: return user.gpt4o
                 if ai_model_id == 2: return user.llama31405b
                 if ai_model_id == 3: return user.claude35sonnet
-                if ai_model_id == 4: return user.flux
-                if ai_model_id == 5: return user.fluxrealism
-                if ai_model_id == 6: return user.fluxanime
-                if ai_model_id == 7: return user.fluxpixel
-                if ai_model_id == 8: return user.sd3
+                if ai_model_id == 4: return user.playgroundv25
+                if ai_model_id == 5: return user.sd3
 
         async def set_base_requests(tg_id: int, level):
             async with async_session() as session:
@@ -47,41 +44,29 @@ class User:
                     user.gpt4o = 0
                     user.llama31405b = 0
                     user.claude35sonnet = 0
-                    user.flux = 3
-                    user.fluxrealism = 0
-                    user.fluxanime = 0
-                    user.fluxpixel = 0
-                    user.sd3 = 0
+                    user.playgroundv25 = 1
+                    user.sd3 = 3
                 if level == 1:
-                    user.gpt4omini = 0
-                    user.gpt4o = 0
-                    user.llama31405b = 0
-                    user.claude35sonnet = 0
-                    user.flux = 0
-                    user.fluxrealism = 0
-                    user.fluxanime = 0
-                    user.fluxpixel = 0
-                    user.sd3 = 0
+                    user.gpt4omini = 50
+                    user.gpt4o = 20
+                    user.llama31405b = 30
+                    user.claude35sonnet = 30
+                    user.playgroundv25 = 10
+                    user.sd3 = 15
                 if level == 2:
-                    user.gpt4omini = 0
-                    user.gpt4o = 0
-                    user.llama31405b = 0
-                    user.claude35sonnet = 0
-                    user.flux = 0
-                    user.fluxrealism = 0
-                    user.fluxanime = 0
-                    user.fluxpixel = 0
-                    user.sd3 = 0
+                    user.gpt4omini = 100
+                    user.gpt4o = 50
+                    user.llama31405b =75
+                    user.claude35sonnet = 75
+                    user.playgroundv25 = 20
+                    user.sd3 = 30
                 if level == 3:
-                    user.gpt4omini = 0
-                    user.gpt4o = 0
-                    user.llama31405b = 0
-                    user.claude35sonnet = 0
-                    user.flux = 0
-                    user.fluxrealism = 0
-                    user.fluxanime = 0
-                    user.fluxpixel = 0
-                    user.sd3 = 0
+                    user.gpt4omini = 200
+                    user.gpt4o = 100
+                    user.llama31405b = 150
+                    user.claude35sonnet = 150
+                    user.playgroundv25 = 40
+                    user.sd3 = 60
                 await session.commit()
 
         async def remove_requests(tg_id: int, ai_model_id: int, quantity_of_requests: int):
@@ -91,11 +76,8 @@ class User:
                 if ai_model_id == 1: user.gpt4o -= quantity_of_requests
                 if ai_model_id == 2: user.llama31405b -= quantity_of_requests
                 if ai_model_id == 3: user.claude35sonnet -= quantity_of_requests
-                if ai_model_id == 4: user.flux -= quantity_of_requests
-                if ai_model_id == 5: user.fluxrealism -= quantity_of_requests
-                if ai_model_id == 6: user.fluxanime -= quantity_of_requests
-                if ai_model_id == 7: user.fluxpixel -= quantity_of_requests
-                if ai_model_id == 8: user.sd3 -= quantity_of_requests
+                if ai_model_id == 4: user.playgroundv25 -= quantity_of_requests
+                if ai_model_id == 5: user.sd3 -= quantity_of_requests
                 await session.commit()
 
         class level:

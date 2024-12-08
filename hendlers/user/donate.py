@@ -2,8 +2,12 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, LabeledPrice, PreCheckoutQuery, PollAnswer, SuccessfulPayment
 from keyboards.other_kb import donate_button, premium
 from database.requests import User
+from crypto_pay_api_sdk import cryptopay
+import os
+
 
 router = Router()
+Crypto = cryptopay.Crypto(os.getenv(CRYPTO_BOT_API), testnet = True)
 
 @router.message(F.text == "Премиум 👉👈")
 async def setting(message: Message):
@@ -22,7 +26,7 @@ async def select_premium(callback_query: CallbackQuery):
         await callback_query.message.answer(text="master", reply_markup=await donate_button(3))
 
 @router.callback_query(lambda callback_query: callback_query.data.startswith("payStars_"))
-async def returnqwe(callback_query: CallbackQuery):
+async def paystars(callback_query: CallbackQuery):
     level = int(callback_query.data.split("_")[1])
     if level == 1: payload = 50
     if level == 2: payload = 150
@@ -47,3 +51,16 @@ async def successful_payment(message: Message):
     if payload == 300:
         await User.ai.level.set(tg_id=message.from_user.id, level=3)
     await User.ai.subscription_date.set(tg_id=message.from_user.id)
+
+@router.callback_query(lambda callback_query: callback_query.data.startswith("payCrypto_"))
+async def paycrypto(callback_query: CallbackQuery):
+    level = int(callback_query.data.split("_")[1])
+    if level == 1: amount = 0
+    if level == 2: amount = 0
+    if level == 3: amount = 0
+    
+    # invoice = Crypto.createInvoice("TON", amount=str(amount), params={"description": "a", "expires_in": 300})
+    # invoice_id = int(invoice.get('result').get('invoice_id'))
+    # expiration_date = datetime.fromisoformat(invoice_expiration_date.replace("Z", "+00:00"))
+
+    # get_invoice_status = (Crypto.getInvoices(params = {"asset": "TON", "invoice_ids": invoice_id})).get('result', {}).get('items', [{}])[0].get("status")
