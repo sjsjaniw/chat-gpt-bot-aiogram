@@ -3,11 +3,12 @@ from aiogram.types import Message, CallbackQuery, LabeledPrice, PreCheckoutQuery
 from keyboards.other_kb import donate_button, premium
 from database.requests import User
 from crypto_pay_api_sdk import cryptopay
+from aiogram.fsm.context import FSMContext
 import os
 
 
 router = Router()
-Crypto = cryptopay.Crypto(os.getenv(CRYPTO_BOT_API), testnet = True)
+Crypto = cryptopay.Crypto(os.getenv("CRYPTO_BOT_API"), testnet = True)
 
 @router.message(F.text == "Премиум 👉👈")
 async def setting(message: Message):
@@ -28,9 +29,9 @@ async def select_premium(callback_query: CallbackQuery):
 @router.callback_query(lambda callback_query: callback_query.data.startswith("payStars_"))
 async def paystars(callback_query: CallbackQuery):
     level = int(callback_query.data.split("_")[1])
-    if level == 1: payload = 50
-    if level == 2: payload = 150
-    if level == 3: payload = 300
+    if level == 1: payload = 25
+    if level == 2: payload = 75
+    if level == 3: payload = 150
     await callback_query.message.answer_invoice(title="Премиум", 
                                                 description="Премиум", 
                                                 payload=str(payload),
@@ -44,23 +45,48 @@ async def pre_checkout_query(query: PreCheckoutQuery):
 @router.message(F.successful_payment)
 async def successful_payment(message: Message):
     payload = int(message.successful_payment.invoice_payload)
-    if payload == 50:
+    if payload == 25:
         await User.ai.level.set(tg_id=message.from_user.id, level=1)
-    if payload == 150:
+    if payload == 75:
         await User.ai.level.set(tg_id=message.from_user.id, level=2)
-    if payload == 300:
+    if payload == 150:
         await User.ai.level.set(tg_id=message.from_user.id, level=3)
     await User.ai.subscription_date.set(tg_id=message.from_user.id)
 
 @router.callback_query(lambda callback_query: callback_query.data.startswith("payCrypto_"))
-async def paycrypto(callback_query: CallbackQuery):
-    level = int(callback_query.data.split("_")[1])
-    if level == 1: amount = 0
-    if level == 2: amount = 0
-    if level == 3: amount = 0
-    
-    # invoice = Crypto.createInvoice("TON", amount=str(amount), params={"description": "a", "expires_in": 300})
-    # invoice_id = int(invoice.get('result').get('invoice_id'))
-    # expiration_date = datetime.fromisoformat(invoice_expiration_date.replace("Z", "+00:00"))
+async def paycrypto(callback_query: CallbackQuery, state: FSMContext):
+    if (await state.get_data()).get("invoice_id"):
+        data = await state.get_data()
+        get_invoice_status = (Crypto.getInvoices(params = {"asset": "TON", "invoice_ids": int(data.get("invoice_id"))})).get('result', {}).get('items', [{}])[0].get("status")
 
-    # get_invoice_status = (Crypto.getInvoices(params = {"asset": "TON", "invoice_ids": invoice_id})).get('result', {}).get('items', [{}])[0].get("status")
+        if get_invoice_status == "paid":
+            await User.ai.level.set(tg_id=callback_query.from_user.id, level=int(data.get("level")))
+            await User.ai.subscription_date.set(tg_id=callback_query.from_user.id)
+            await state.clear()
+        if get_invoice_status == "active":
+            print("not paid")
+        else:
+            print("expired")
+    else:
+        level = int(callback_query.data.split("_")[1])
+
+        if level == 1: amount = 0.075
+        if level == 2: amount = 0.15
+        if level == 3: amount = 0.225
+
+        invoice = Crypto.createInvoice("TON", amount=str(amount), params={"description": "a", "expires_in": 300})
+        invoice_id = int(invoice.get('result').get('invoice_id'))
+        await state.update_data(invoice_id=invoice_id)
+        await state.update_data(level=level)
+
+        await callback_query.message.answer(text=(Crypto.getInvoices(params = {"asset": "TON", "invoice_ids": invoice_id})).get('result', {}).get('items', [{}])[0].get("pay_url"))
+
+@router.callback_query()
+async def give_premium(callback_query: CallbackQuery, state: FSMContext):
+    if (await state.get_data()).get("invoice_id"):
+        data = await state.get_data()
+        get_invoice_status = (Crypto.getInvoices(params = {"asset": "TON", "invoice_ids": int(data.get("invoice_id"))})).get('result', {}).get('items', [{}])[0].get("status")
+        if get_invoice_status == "paid":
+            await User.ai.level.set(tg_id=callback_query.from_user.id, level=int(data.get("level")))
+            await User.ai.subscription_date.set(tg_id=callback_query.from_user.id)
+            await state.clear()
