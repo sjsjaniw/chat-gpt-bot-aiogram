@@ -1,7 +1,7 @@
 import asyncio
 from aiogram import Bot, Dispatcher
 # from aiogram.fsm.storage.redis import RedisStorage
-from aiogram.fsm.storage.memory import MemoryStorage
+# from aiogram.fsm.storage.memory import MemoryStorage
 
 from aiogram.utils.chat_action import ChatActionMiddleware
 
@@ -10,6 +10,7 @@ import os
 import logging
 
 from hendlers import router as main_router
+from middlewares import TrottlingMiddleware
 
 from database.models import async_db_main
 
@@ -21,12 +22,13 @@ async def main():
     dp = Dispatcher()
     dp.include_router(main_router)
     dp.message.middleware(ChatActionMiddleware())
+    dp.message.middleware(TrottlingMiddleware())
     await async_db_main()
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, filename="last_launch.log", filemode="w", format="%(asctime)s %(levelname)s %(message)s")
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

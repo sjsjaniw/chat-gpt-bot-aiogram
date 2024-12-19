@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-engine = create_async_engine(os.getenv("DATABASE_URL"))
-# engine = create_async_engine(url = 'sqlite+aiosqlite:///db.sqlite3')
+# engine = create_async_engine(os.getenv("DATABASE_URL"))
+engine = create_async_engine(url = 'sqlite+aiosqlite:///db.sqlite3')
 
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 

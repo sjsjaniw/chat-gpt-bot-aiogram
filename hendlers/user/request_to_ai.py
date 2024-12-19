@@ -5,6 +5,8 @@ from ai import response_to_ai
 from database.requests import User
 import aiofiles.os
 from datetime import timedelta, datetime, timezone
+import re
+from translations.translate import translate as _
 
 router = Router()
 
@@ -33,19 +35,20 @@ async def request_to_ai(message: Message):
     if ai_requests:
         enter_ai = await response_to_ai(text=message.text, ai_id=ai_id)
     else:
-        await message.answer("У вас кончились запросы на сегодня")
+        await message.answer(await _(tg_id=message.from_user.id, key="У вас кончились запросы на сегодня 😥"))
         return
 
     if ai_id < 4:
         if enter_ai == "":
-            await message.reply(text="error", parse_mode=ParseMode.MARKDOWN)
+            await message.reply(text="Empty text, try again", parse_mode=ParseMode.MARKDOWN_V2)
             return 0
-        await message.reply(text=str(enter_ai), parse_mode=ParseMode.MARKDOWN)
+        text = re.sub(f"([{re.escape(r'_\*\[\]\(\)~>\#+\-=|{}\.!')}])", r"\\\1", enter_ai) #shielding
+        await message.reply(text=str(text), parse_mode=ParseMode.MARKDOWN_V2)
 
     else:
         url = f"generated_images{str(enter_ai)[7:]}"
         photo = FSInputFile(path=url)
         await message.reply_photo(photo=photo)
-        # await aiofiles.os.remove(path=url)
+        await aiofiles.os.remove(path=url)
 
     await User.ai.remove_requests(tg_id=tg_id, ai_model_id=ai_id, quantity_of_requests=1)

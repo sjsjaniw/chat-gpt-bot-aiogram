@@ -3,9 +3,9 @@ from sqlalchemy import select, update
 from datetime import datetime, timezone
 
 class User:
-    async def add(tg_id):
+    async def add(tg_id, language):
         async with async_session() as session:
-            session.add(UserOrm(tg_id=tg_id))
+            session.add(UserOrm(tg_id=tg_id, language=language))
             session.add(AiUserOrm(tg_id=tg_id))
             await session.commit()
 
@@ -21,8 +21,11 @@ class User:
                 user.ai_id = ai_id
                 await session.commit()
 
-        async def language():
-            pass
+        async def language(tg_id, language):
+            async with async_session() as session:
+                user = await session.scalar(select(UserOrm).where(UserOrm.tg_id == tg_id))
+                user.language = language
+                await session.commit()
 
 
     class ai:
@@ -114,4 +117,4 @@ class User:
                 async with async_session() as session:
                     user = await session.scalar(select(AiUserOrm).where(AiUserOrm.tg_id == tg_id))
                     user.date_of_subscription = date
-                    await session.commit()
+                    await session.commit()                    

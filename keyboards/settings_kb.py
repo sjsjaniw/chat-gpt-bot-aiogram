@@ -2,12 +2,12 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from database.requests import User
 from ai import ai_list
+from translations.translate import translate as _
 
-
-async def settings_kb():
+async def settings_kb(tg_id):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Выбрать нейросеть", callback_data="select_ai")],
-        [InlineKeyboardButton(text="Язык", callback_data="language")]
+        [InlineKeyboardButton(text=await _(tg_id=tg_id, key="🤖 Выбрать нейросеть"), callback_data="select_ai")],
+        [InlineKeyboardButton(text=await _(tg_id=tg_id, key="🏳️ Язык"), callback_data="set_language")]
     ])
     return keyboard
 
