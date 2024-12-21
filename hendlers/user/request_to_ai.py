@@ -42,7 +42,8 @@ async def request_to_ai(message: Message):
         if enter_ai == "":
             await message.reply(text="Empty text, try again", parse_mode=ParseMode.MARKDOWN_V2)
             return 0
-        text = re.sub(f"([{re.escape(r'_\*\[\]\(\)~>\#+\-=|{}\.!')}])", r"\\\1", enter_ai) #shielding
+        pattern = f"([{re.escape(r'_\*\[\]\(\)~>\#+\-=|{}\.!')}])"
+        text = re.sub(pattern, r"\\\1", enter_ai) #shielding
         await message.reply(text=str(text), parse_mode=ParseMode.MARKDOWN_V2)
 
     else:
