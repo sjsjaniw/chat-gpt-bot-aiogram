@@ -79,8 +79,7 @@ async def paycrypto(callback_query: CallbackQuery, state: FSMContext):
         await state.update_data(invoice_id=invoice_id)
         await state.update_data(level=level)
 
-        await callback_query.message.answer(text=await _(tg_id=callback_query.from_user.id, key="Можете оплатить криптовалютой прейдя по ссылке 💰")+f"\n{(Crypto.getInvoices(params = {"asset": "TON", "invoice_ids": invoice_id})).get('result', {}).get('items', [{}])[0].get("pay_url")}")
-
+        await callback_query.message.answer(text=await _(tg_id=callback_query.from_user.id, key="Можете оплатить криптовалютой прейдя по ссылке 💰")+f"\n{(Crypto.getInvoices(params={{'asset': 'TON', 'invoice_ids': invoice_id}})).get('result', {}).get('items', [{}])[0].get('pay_url')}")
 @router.callback_query()
 async def give_premium(callback_query: CallbackQuery, state: FSMContext):
     if (await state.get_data()).get("invoice_id"):

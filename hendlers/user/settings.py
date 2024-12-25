@@ -12,7 +12,7 @@ router = Router()
 
 @router.message((F.text == "⚙️ Настройки") | (F.text == "⚙️ Settings"))
 async def setting(message: Message):
-    await message.answer(text="settings", reply_markup=await settings_kb(tg_id=message.from_user.id))
+    await message.answer(text=await _(tg_id=message.from_user.id, key="⚙️ Настройки"), reply_markup=await settings_kb(tg_id=message.from_user.id))
 
 @router.callback_query(F.data == "select_ai")
 async def select_ai(callback_query: CallbackQuery):

@@ -34,8 +34,8 @@ class AiUserOrm(Base):
     gpt4o = mapped_column(Integer, nullable=False, default=0)
     llama31405b = mapped_column(Integer, nullable=False, default=0)
     claude35sonnet = mapped_column(Integer, nullable=False, default=0)
-    playgroundv25 = mapped_column(Integer, nullable=False, default=0)
-    sd3 = mapped_column(Integer, nullable=False, default=0)
+    playgroundv25 = mapped_column(Integer, nullable=False, default=1)
+    sd3 = mapped_column(Integer, nullable=False, default=3)
 
     date_of_issued_requests = mapped_column(DateTime, nullable=True, default=datetime.now(timezone.utc).replace(tzinfo=None))
     date_of_subscription = mapped_column(DateTime, nullable=True) 
