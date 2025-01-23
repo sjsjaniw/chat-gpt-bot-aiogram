@@ -2,7 +2,7 @@ from aiogram import BaseMiddleware
 from aiogram.types import Message
 import time
 
-class TrottlingMiddleware(BaseMiddleware):
+class ThrottlingMiddleware(BaseMiddleware):
     def __init__(self, rate_limit: int = 3):
         self.rate_limit = rate_limit
         self.users = {}
