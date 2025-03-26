@@ -1,9 +1,7 @@
-from datetime import datetime, timezone
-from sqlalchemy import ForeignKey, Integer, BigInteger, String, Boolean, DateTime, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, Integer, BigInteger, String, Boolean
+from sqlalchemy.orm import DeclarativeBase, mapped_column, relationship
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 # engine = create_async_engine(os.getenv("DATABASE_URL"))
@@ -28,17 +26,8 @@ class AiUserOrm(Base):
     __tablename__ = "ai_of_users"
     id = mapped_column(Integer, primary_key=True)
     tg_id = mapped_column(BigInteger, ForeignKey("users.tg_id"))
-    level = mapped_column(Integer, nullable=False, default=0)
-
-    gpt4omini = mapped_column(Integer, nullable=False, default=20)
-    gpt4o = mapped_column(Integer, nullable=False, default=0)
-    llama31405b = mapped_column(Integer, nullable=False, default=0)
-    claude35sonnet = mapped_column(Integer, nullable=False, default=0)
-    playgroundv25 = mapped_column(Integer, nullable=False, default=1)
-    sd3 = mapped_column(Integer, nullable=False, default=3)
-
-    date_of_issued_requests = mapped_column(DateTime, nullable=True, default=datetime.now(timezone.utc).replace(tzinfo=None))
-    date_of_subscription = mapped_column(DateTime, nullable=True) 
+    
+    o3mini = mapped_column(Integer, nullable=False, default=1)
 
 async def async_db_main():
     async with engine.begin() as conn:
