@@ -10,8 +10,10 @@ from aiogram.utils.chat_action import ChatActionMiddleware
 from dotenv import load_dotenv
 
 from hendlers import router as main_router
-from middlewares import ThrottlingMiddleware  # Исправлено название
+from middlewares import ThrottlingMiddleware
 from database.models import async_db_main
+
+
 
 load_dotenv()
 async def main():
@@ -31,8 +33,10 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     try:
         asyncio.run(main())
+        
     except KeyboardInterrupt:
         print("Bot stopped!")
+        
     except Exception as e:
         import sys
         print(e)

@@ -3,6 +3,8 @@ from sqlalchemy.orm import DeclarativeBase, mapped_column, relationship
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from dotenv import load_dotenv
 
+
+
 load_dotenv()
 # engine = create_async_engine(os.getenv("DATABASE_URL"))
 engine = create_async_engine(url = 'sqlite+aiosqlite:///db.sqlite3')
@@ -14,6 +16,7 @@ class Base(DeclarativeBase):
 
 class UserOrm(Base):
     __tablename__ = "users"
+    
     id = mapped_column(Integer, primary_key=True)
     tg_id = mapped_column(BigInteger, nullable=False, unique=True)
     language = mapped_column(String(2), nullable=False, default="ru")
@@ -24,9 +27,9 @@ class UserOrm(Base):
 
 class AiUserOrm(Base):
     __tablename__ = "ai_of_users"
+    
     id = mapped_column(Integer, primary_key=True)
     tg_id = mapped_column(BigInteger, ForeignKey("users.tg_id"))
-    
     o3mini = mapped_column(Integer, nullable=False, default=1)
 
 async def async_db_main():

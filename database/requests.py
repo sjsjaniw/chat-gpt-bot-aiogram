@@ -2,6 +2,8 @@ from contextlib import asynccontextmanager
 from .models import async_session, UserOrm, AiUserOrm
 from sqlalchemy import select
 
+
+
 def model_to_orm(name: str):
     return name.replace("-", "").replace(".", "")
 
@@ -26,8 +28,8 @@ class User:
     async def get(cls, tg_id: int):
         async with get_session() as session:
             return await session.scalar(
-                select(UserOrm).where(UserOrm.tg_id == tg_id)
-            )
+                select(UserOrm).where(UserOrm.tg_id == tg_id))
+            
     class edit:
         @classmethod
         async def ai_id(cls, tg_id, ai_id):
