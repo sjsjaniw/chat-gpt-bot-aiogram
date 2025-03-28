@@ -10,12 +10,6 @@ ai_list = ["o3-mini"]
 
 r = redis.Redis(host="localhost", port=6379, decode_responses=True)
 
-# messages = []
-# r.delete("messages")
-# r.set("messages", [])
-
-
-
 async def add_message(key: str, role: str, content: str) -> None:
     message = {"role": role, "content": content}
     r.rpush(key, json.dumps(message))
@@ -62,6 +56,6 @@ async def response_to_ai(tg_id: int, text: str, image_path: str | None = None, w
         chunk = completion.choices[0].delta.content or ""
         full_response += chunk
     
-    messages = get_all_messages(key)
-    add_message(key, "assistant", full_response)
+    messages = await get_all_messages(key)
+    await add_message(key, "assistant", full_response)
     return full_response
