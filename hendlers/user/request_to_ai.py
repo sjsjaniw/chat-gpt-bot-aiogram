@@ -16,7 +16,7 @@ async def request_to_ai(message: Message):
     if message.text.startswith("/"): 
         return
     
-    enter_ai = await response_to_ai(text=message.text)
+    enter_ai = await response_to_ai(tg_id=message.from_user.id, text=message.text)
     if enter_ai == "":
         await message.reply(text="Empty text returned, try again")
         return
@@ -38,6 +38,7 @@ async def request_to_ai_photo(message: Message):
         destination=image
         )
     enter_ai = await response_to_ai(
+        tg_id=message.from_user.id,
         text=message.caption, 
         image_path=image)
     

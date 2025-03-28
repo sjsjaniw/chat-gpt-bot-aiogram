@@ -2,21 +2,42 @@ from g4f.client import AsyncClient
 from g4f.Provider import Blackbox
 import aiofiles
 import io
+import redis
+import json
+
 
 ai_list = ["o3-mini"]
 
-messages = []
-async def response_to_ai(text: str, image_path: str | None = None, web_search: bool = False):
+r = redis.Redis(host="localhost", port=6379, decode_responses=True)
+
+# messages = []
+# r.delete("messages")
+# r.set("messages", [])
+
+
+
+async def add_message(key: str, role: str, content: str) -> None:
+    message = {"role": role, "content": content}
+    r.rpush(key, json.dumps(message))
+
+async def get_all_messages(key: str) -> list:
+    raw_messages = r.lrange(key, 0, -1)
+    return [json.loads(msg) for msg in raw_messages]
+    
+async def response_to_ai(tg_id: int, text: str, image_path: str | None = None, web_search: bool = False) -> str:
     client = AsyncClient()
+    key = f"messages_{tg_id}"
 
     if text == None: text = ""
-    messages.append({"role": "user", "content": text})
+    await add_message(key, "user", text)
+    messages = await get_all_messages(key)
     
     image = None
     if image_path: 
         with open(image_path, "rb") as image:
             image_data = image.read()
         image_io = io.BytesIO(image_data)
+        
         response = client.chat.completions.create(
             model=ai_list[0],
             provider=Blackbox,
@@ -40,6 +61,7 @@ async def response_to_ai(text: str, image_path: str | None = None, web_search: b
     async for completion in response:
         chunk = completion.choices[0].delta.content or ""
         full_response += chunk
-        
-    messages.append({"role": "assistant", "content": full_response})
+    
+    messages = get_all_messages(key)
+    add_message(key, "assistant", full_response)
     return full_response
