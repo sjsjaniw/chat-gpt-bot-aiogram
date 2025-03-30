@@ -27,7 +27,7 @@ async def response_to_ai(tg_id: int, text: str, image_path: str | None = None, w
     
     image = None
     if image_path: 
-        with aiofiles.open(image_path, "rb") as image:
+        async with aiofiles.open(image_path, "rb") as image:
             image_data = await image.read()
         image_io = io.BytesIO(image_data)
         
