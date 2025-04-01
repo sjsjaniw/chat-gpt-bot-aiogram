@@ -14,7 +14,7 @@ class ThrottlingMiddleware(BaseMiddleware):
         if user_id in self.users:
             last_time = self.users[user_id]
             if current_time - last_time < self.rate_limit:
-                await event.reply("Пожалуйста, не спамьте")
+                await event.reply("Пожалуйста, не спамьте | Please, dont spam")
                 return
 
         self.users[user_id] = current_time
